@@ -13,7 +13,10 @@
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-imports": ["error", { "prefer": "type-imports" }],
     "eqeqeq": ["error", "always", { "null": "ignore" }],
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    // `info` is allowed for deliberate startup diagnostics (which Firebase
+    // project is in use, for instance) — the kind of line that turns a
+    // half-hour of guessing into a glance at the console.
+    "no-console": ["warn", { "allow": ["info", "warn", "error"] }],
     "import/no-cycle": "error",
     // Side-effect imports are how stylesheets and test setup get loaded here.
     "import/no-unassigned-import": "off",

@@ -1,0 +1,49 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Single-page app fallback.
+#
+# Netlify serves static files: without this, every route except "/" returns a
+# 404 before React Router ever runs — /login, /memories/<id>, a bookmarked
+# search, or any page reloaded with F5. Netlify only applies the rule when no
+# real file matches, so /assets/*, /sw.js and /manifest.webmanifest still serve
+# themselves.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# The service worker must never be cached, or a deploy can leave users pinned to
+# an old build until they clear storage. Its precache manifest is versioned, so
+# revalidating on every load costs one tiny conditional request.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/registerSW.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Hashed assets are immutable by construction.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"

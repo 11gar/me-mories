@@ -25,6 +25,37 @@ const CODE_MAP: Record<string, { code: AppErrorCode; message: string }> = {
     code: 'auth/invalid-credentials',
     message: 'Adresse e-mail ou mot de passe incorrect.',
   },
+  // Returned as PASSWORD_LOGIN_DISABLED by the REST API. This is a project
+  // misconfiguration, not a user mistake, so the message says where to fix it —
+  // "identifiants incorrects" would send someone hunting for a typo forever.
+  'auth/operation-not-allowed': {
+    code: 'auth/operation-not-allowed',
+    message:
+      "Ce mode de connexion n'est pas activé sur le projet Firebase " +
+      '(console → Authentication → Sign-in method).',
+  },
+  // Firebase now returns a single opaque code instead of distinguishing
+  // "unknown email" from "wrong password", to avoid leaking which accounts exist.
+  'auth/invalid-login-credentials': {
+    code: 'auth/invalid-credentials',
+    message: 'Adresse e-mail ou mot de passe incorrect.',
+  },
+  'auth/user-disabled': {
+    code: 'auth/invalid-credentials',
+    message: 'Ce compte a été désactivé.',
+  },
+  // Raised when the site's domain is missing from Authentication → Settings →
+  // Authorized domains. Only affects the OAuth providers.
+  'auth/unauthorized-domain': {
+    code: 'auth/unauthorized-domain',
+    message:
+      "Ce domaine n'est pas autorisé pour la connexion Google " +
+      '(console Firebase → Authentication → Settings → Authorized domains).',
+  },
+  'auth/invalid-api-key': {
+    code: 'configuration',
+    message: 'Clé API Firebase invalide : vérifiez les variables d’environnement du déploiement.',
+  },
   'auth/invalid-email': {
     code: 'auth/invalid-email',
     message: "Cette adresse e-mail n'est pas valide.",
@@ -81,8 +112,20 @@ export function mapFirebaseError(error: unknown): AppError {
       return new AppError(mapped.code, mapped.message, { cause: error });
     }
 
-    return new AppError('unknown', "Une erreur inattendue s'est produite.", { cause: error });
+    // An unmapped code is a gap in CODE_MAP, and hiding it behind "une erreur
+    // inattendue" is how a one-line configuration problem turns into an hour of
+    // guessing. Surface the raw code and log the original: the user still gets a
+    // readable sentence, and whoever debugs it gets something to search for.
+    console.error(`[firebase] Code d'erreur non mappé : ${error.code}`, error);
+
+    return new AppError(
+      'unknown',
+      `Une erreur inattendue s'est produite (${error.code}).`,
+      { cause: error },
+    );
   }
+
+  console.error('[firebase] Erreur non-Firebase remontée jusqu’au mapping.', error);
 
   return new AppError('unknown', "Une erreur inattendue s'est produite.", { cause: error });
 }
