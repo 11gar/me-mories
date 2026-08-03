@@ -1,0 +1,96 @@
+.card {
+  @include surface;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-3);
+  padding: var(--mm-space-4);
+  transition:
+    border-color var(--mm-duration-fast) var(--mm-ease),
+    box-shadow var(--mm-duration-fast) var(--mm-ease);
+
+  &:hover {
+    border-color: var(--mm-border-strong);
+    box-shadow: var(--mm-shadow-1);
+  }
+}
+
+.trashed {
+  background: var(--mm-surface-sunken);
+
+  .text {
+    color: var(--mm-text-muted);
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-3);
+  min-width: 0;
+}
+
+.text {
+  // Preserves the line breaks the user typed — a memory is often a list.
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  line-height: var(--mm-leading-normal);
+}
+
+.clamped {
+  @include line-clamp(6);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mm-space-2);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mm-space-3);
+}
+
+.date {
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-xs);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-1);
+  // Actions stay hidden until the card is hovered or something inside it has
+  // focus, so a long list reads as text rather than as a wall of buttons.
+  opacity: 0;
+  transition: opacity var(--mm-duration-fast) var(--mm-ease);
+
+  .card:hover &,
+  .card:focus-within & {
+    opacity: 1;
+  }
+
+  // Touch has no hover: always show them.
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
+.open {
+  @include focus-ring;
+
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--mm-radius-md);
+  color: var(--mm-text-subtle);
+
+  &:hover {
+    background: var(--mm-surface-2);
+    color: var(--mm-text);
+  }
+}

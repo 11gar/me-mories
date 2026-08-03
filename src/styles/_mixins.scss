@@ -1,0 +1,110 @@
+@use 'sass:map';
+
+// Mixins and Sass-level constants shared by every stylesheet.
+//
+// IMPORTANT: this file is injected into every `.module.scss` by Vite
+// (see vite.config.ts). It must never emit CSS — anything that produces output
+// here would be duplicated in every component bundle. Emit CSS from
+// styles/global.scss instead.
+
+$breakpoints: (
+  'sm': 30rem,
+  // 480px
+  'md': 48rem,
+  // 768px  — tablet / desktop nav switch
+  'lg': 64rem,
+  // 1024px
+  'xl': 80rem,
+) !default;
+
+@mixin media-up($name) {
+  $size: map.get($breakpoints, $name);
+
+  @if not $size {
+    @error 'Breakpoint inconnu : #{$name}. Disponibles : #{map.keys($breakpoints)}.';
+  }
+
+  @media (min-width: $size) {
+    @content;
+  }
+}
+
+@mixin media-down($name) {
+  $size: map.get($breakpoints, $name);
+
+  @if not $size {
+    @error 'Breakpoint inconnu : #{$name}. Disponibles : #{map.keys($breakpoints)}.';
+  }
+
+  @media (max-width: #{$size - 0.0625rem}) {
+    @content;
+  }
+}
+
+/// Consistent keyboard focus indicator. Uses :focus-visible so pointer users
+/// never see it, and offsets outward so it stays legible on filled surfaces.
+@mixin focus-ring($offset: 2px, $color: var(--mm-focus)) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+  }
+}
+
+@mixin line-clamp($lines: 3) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+  overflow: hidden;
+}
+
+/// Hidden visually, still announced by screen readers.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin surface($radius: var(--mm-radius-lg)) {
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: $radius;
+}
+
+@mixin scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mm-border-strong) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--mm-border-strong);
+    border-radius: var(--mm-radius-full);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/// Wraps motion so it is skipped for users who asked the OS to reduce it.
+@mixin motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

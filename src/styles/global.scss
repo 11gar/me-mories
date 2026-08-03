@@ -1,0 +1,29 @@
+// The only stylesheet that emits global CSS. Imported once, from main.tsx.
+@use 'tokens';
+@use 'reset';
+
+body {
+  background: var(--mm-bg);
+  color: var(--mm-text);
+  font-family: var(--mm-font-sans);
+  font-size: var(--mm-text-base);
+  line-height: var(--mm-leading-normal);
+  transition:
+    background-color var(--mm-duration-base) var(--mm-ease),
+    color var(--mm-duration-base) var(--mm-ease);
+}
+
+#root {
+  min-height: 100dvh;
+  isolation: isolate;
+}
+
+// Locks background scrolling while a modal or sheet is open.
+body[data-scroll-locked='true'] {
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--mm-primary-soft);
+  color: var(--mm-text);
+}

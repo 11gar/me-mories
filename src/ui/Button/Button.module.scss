@@ -1,0 +1,116 @@
+.button {
+  @include focus-ring;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mm-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--mm-radius-md);
+  font-weight: var(--mm-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--mm-duration-fast) var(--mm-ease),
+    border-color var(--mm-duration-fast) var(--mm-ease),
+    color var(--mm-duration-fast) var(--mm-ease),
+    transform var(--mm-duration-fast) var(--mm-ease);
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mm-space-2);
+}
+
+.label {
+  @include truncate;
+}
+
+// The spinner overlays the content so the button keeps its width while busy.
+.loading .content {
+  visibility: hidden;
+}
+
+.spinner {
+  position: absolute;
+  display: inline-flex;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+// ------------------------------------------------------------------- variants
+
+.primary {
+  background: var(--mm-primary);
+  color: var(--mm-primary-contrast);
+
+  &:hover:not(:disabled) {
+    background: var(--mm-primary-hover);
+  }
+}
+
+.secondary {
+  background: var(--mm-surface);
+  border-color: var(--mm-border);
+  color: var(--mm-text);
+
+  &:hover:not(:disabled) {
+    background: var(--mm-surface-hover);
+    border-color: var(--mm-border-strong);
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: var(--mm-text-muted);
+
+  &:hover:not(:disabled) {
+    background: var(--mm-surface-2);
+    color: var(--mm-text);
+  }
+}
+
+.danger {
+  background: var(--mm-danger);
+  color: var(--mm-danger-contrast);
+
+  &:hover:not(:disabled) {
+    background: var(--mm-danger-hover);
+  }
+}
+
+// ---------------------------------------------------------------------- sizes
+
+.sm {
+  height: 2rem;
+  padding: 0 var(--mm-space-3);
+  font-size: var(--mm-text-sm);
+}
+
+.md {
+  height: 2.5rem;
+  padding: 0 var(--mm-space-4);
+  font-size: var(--mm-text-base);
+}
+
+.lg {
+  height: 3rem;
+  padding: 0 var(--mm-space-6);
+  font-size: var(--mm-text-md);
+}
+
+.fullWidth {
+  width: 100%;
+}

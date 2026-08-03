@@ -1,0 +1,63 @@
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-3);
+  width: 100%;
+  max-width: 26rem;
+  padding: var(--mm-space-3) var(--mm-space-3) var(--mm-space-3) var(--mm-space-4);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-md);
+  box-shadow: var(--mm-shadow-3);
+  pointer-events: auto;
+}
+
+.icon {
+  flex: none;
+  color: var(--mm-text-subtle);
+}
+
+.success .icon {
+  color: var(--mm-success);
+}
+
+.danger .icon {
+  color: var(--mm-danger);
+}
+
+.message {
+  flex: 1;
+  font-size: var(--mm-text-sm);
+}
+
+.action {
+  @include focus-ring;
+
+  flex: none;
+  padding: var(--mm-space-1) var(--mm-space-2);
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-primary);
+  font-size: var(--mm-text-sm);
+  font-weight: var(--mm-weight-semibold);
+
+  &:hover {
+    background: var(--mm-primary-soft);
+  }
+}
+
+.dismiss {
+  @include focus-ring;
+
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-text-subtle);
+
+  &:hover {
+    background: var(--mm-surface-2);
+    color: var(--mm-text);
+  }
+}

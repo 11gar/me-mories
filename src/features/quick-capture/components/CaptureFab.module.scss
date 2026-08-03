@@ -1,0 +1,56 @@
+.fab {
+  @include focus-ring;
+
+  position: fixed;
+  right: var(--mm-space-4);
+  // Clears the mobile bottom bar.
+  bottom: calc(var(--mm-bottom-nav-height) + var(--mm-safe-bottom) + var(--mm-space-4));
+  z-index: var(--mm-z-fab);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mm-space-2);
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--mm-primary);
+  border-radius: var(--mm-radius-full);
+  color: var(--mm-primary-contrast);
+  box-shadow: var(--mm-shadow-3);
+  transition:
+    background-color var(--mm-duration-fast) var(--mm-ease),
+    transform var(--mm-duration-fast) var(--mm-ease-spring);
+
+  &:hover {
+    background: var(--mm-primary-hover);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  // On desktop it widens into a labelled button — there is room, and the label
+  // makes the primary action unmissable for a first-time user.
+  @include media-up('md') {
+    right: var(--mm-space-8);
+    bottom: var(--mm-space-8);
+    width: auto;
+    height: 3rem;
+    padding: 0 var(--mm-space-5);
+    border-radius: var(--mm-radius-full);
+    font-weight: var(--mm-weight-medium);
+  }
+}
+
+.label {
+  @include visually-hidden;
+
+  @include media-up('md') {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: nowrap;
+  }
+}

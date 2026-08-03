@@ -1,0 +1,180 @@
+// Design tokens.
+//
+// Everything is a CSS custom property so that switching themes is a single
+// attribute change on <html> — no React re-render, no flash, and third-party
+// content inside the app inherits the theme for free.
+//
+// Naming: --mm-<category>-<variant>. Components consume these and nothing else;
+// a hard-coded colour or spacing value in a component is a bug.
+
+@mixin light-palette {
+  color-scheme: light;
+
+  --mm-bg: #f6f6f9;
+  --mm-surface: #ffffff;
+  --mm-surface-2: #f1f1f6;
+  --mm-surface-hover: #f4f4f8;
+  --mm-surface-sunken: #ececf2;
+
+  --mm-border: #e4e4ec;
+  --mm-border-strong: #d0d0dc;
+
+  --mm-text: #17171d;
+  --mm-text-muted: #64647a;
+  --mm-text-subtle: #9292a4;
+  --mm-text-inverted: #ffffff;
+
+  --mm-primary: #5b53e8;
+  --mm-primary-hover: #4b43d8;
+  --mm-primary-active: #3f37c4;
+  --mm-primary-soft: #eeecfe;
+  --mm-primary-soft-hover: #e3e0fd;
+  --mm-primary-contrast: #ffffff;
+
+  --mm-danger: #d42a3b;
+  --mm-danger-hover: #bb2233;
+  --mm-danger-soft: #fdeced;
+  --mm-danger-contrast: #ffffff;
+
+  --mm-success: #12855a;
+  --mm-success-soft: #e6f6ef;
+  --mm-warning: #a96f10;
+  --mm-warning-soft: #fdf2e0;
+
+  --mm-focus: #5b53e8;
+  --mm-overlay: rgb(22 22 32 / 45%);
+
+  --mm-shadow-1: 0 1px 2px rgb(20 20 40 / 6%), 0 1px 3px rgb(20 20 40 / 4%);
+  --mm-shadow-2: 0 2px 4px rgb(20 20 40 / 5%), 0 6px 16px rgb(20 20 40 / 7%);
+  --mm-shadow-3: 0 4px 8px rgb(20 20 40 / 6%), 0 16px 40px rgb(20 20 40 / 12%);
+}
+
+@mixin dark-palette {
+  color-scheme: dark;
+
+  --mm-bg: #0d0d12;
+  --mm-surface: #16161d;
+  --mm-surface-2: #1e1e27;
+  --mm-surface-hover: #23232e;
+  --mm-surface-sunken: #101016;
+
+  --mm-border: #282833;
+  --mm-border-strong: #393947;
+
+  --mm-text: #eeeef4;
+  --mm-text-muted: #9d9db0;
+  --mm-text-subtle: #6d6d80;
+  --mm-text-inverted: #16161d;
+
+  --mm-primary: #8b83ff;
+  --mm-primary-hover: #9c95ff;
+  --mm-primary-active: #ada7ff;
+  --mm-primary-soft: #211e42;
+  --mm-primary-soft-hover: #2a2653;
+  --mm-primary-contrast: #12121a;
+
+  --mm-danger: #ff6b78;
+  --mm-danger-hover: #ff8791;
+  --mm-danger-soft: #31161b;
+  --mm-danger-contrast: #12121a;
+
+  --mm-success: #3ecf8e;
+  --mm-success-soft: #13291f;
+  --mm-warning: #e5a944;
+  --mm-warning-soft: #2c2113;
+
+  --mm-focus: #8b83ff;
+  --mm-overlay: rgb(4 4 8 / 65%);
+
+  --mm-shadow-1: 0 1px 2px rgb(0 0 0 / 40%);
+  --mm-shadow-2: 0 2px 4px rgb(0 0 0 / 35%), 0 6px 16px rgb(0 0 0 / 40%);
+  --mm-shadow-3: 0 4px 8px rgb(0 0 0 / 40%), 0 16px 40px rgb(0 0 0 / 55%);
+}
+
+:root {
+  @include light-palette;
+
+  // ------------------------------------------------------------------ spacing
+  --mm-space-1: 0.25rem;
+  --mm-space-2: 0.5rem;
+  --mm-space-3: 0.75rem;
+  --mm-space-4: 1rem;
+  --mm-space-5: 1.25rem;
+  --mm-space-6: 1.5rem;
+  --mm-space-8: 2rem;
+  --mm-space-10: 2.5rem;
+  --mm-space-12: 3rem;
+  --mm-space-16: 4rem;
+
+  // ---------------------------------------------------------------- typography
+  --mm-font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  --mm-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --mm-text-xs: 0.75rem;
+  --mm-text-sm: 0.8125rem;
+  --mm-text-base: 0.9375rem;
+  --mm-text-md: 1rem;
+  --mm-text-lg: 1.125rem;
+  --mm-text-xl: 1.375rem;
+  --mm-text-2xl: 1.75rem;
+  --mm-text-3xl: 2.25rem;
+
+  --mm-leading-tight: 1.2;
+  --mm-leading-snug: 1.4;
+  --mm-leading-normal: 1.6;
+
+  --mm-weight-regular: 400;
+  --mm-weight-medium: 500;
+  --mm-weight-semibold: 600;
+  --mm-weight-bold: 700;
+
+  // -------------------------------------------------------------------- radii
+  --mm-radius-xs: 4px;
+  --mm-radius-sm: 8px;
+  --mm-radius-md: 12px;
+  --mm-radius-lg: 16px;
+  --mm-radius-xl: 22px;
+  --mm-radius-full: 999px;
+
+  // ------------------------------------------------------------------- motion
+  --mm-duration-fast: 120ms;
+  --mm-duration-base: 200ms;
+  --mm-duration-slow: 320ms;
+  --mm-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --mm-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --mm-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  // ------------------------------------------------------------------ z-index
+  --mm-z-base: 0;
+  --mm-z-sticky: 10;
+  --mm-z-fab: 30;
+  --mm-z-overlay: 100;
+  --mm-z-modal: 110;
+  --mm-z-popover: 120;
+  --mm-z-toast: 200;
+
+  // ------------------------------------------------------------------- layout
+  --mm-content-width: 46rem;
+  --mm-content-width-wide: 72rem;
+  --mm-header-height: 3.5rem;
+  --mm-bottom-nav-height: 3.75rem;
+  --mm-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+// System preference wins unless the user explicitly picked a theme.
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-palette;
+  }
+}
+
+// Explicit user choice always wins, in both directions.
+:root[data-theme='dark'] {
+  @include dark-palette;
+}
+
+:root[data-theme='light'] {
+  @include light-palette;
+}

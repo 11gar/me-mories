@@ -1,0 +1,19 @@
+.viewport {
+  position: fixed;
+  right: var(--mm-space-4);
+  bottom: calc(var(--mm-bottom-nav-height) + var(--mm-safe-bottom) + var(--mm-space-4));
+  left: var(--mm-space-4);
+  z-index: var(--mm-z-toast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mm-space-2);
+  pointer-events: none;
+
+  @include media-up('md') {
+    right: var(--mm-space-6);
+    bottom: var(--mm-space-6);
+    left: auto;
+    align-items: flex-end;
+  }
+}

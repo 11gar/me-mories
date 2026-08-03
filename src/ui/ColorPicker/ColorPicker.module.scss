@@ -1,0 +1,59 @@
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mm-space-2);
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  width: 100%;
+  margin-bottom: var(--mm-space-2);
+  padding: 0;
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+  font-weight: var(--mm-weight-medium);
+}
+
+.swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--mm-radius-md);
+  cursor: pointer;
+  // A translucent ring rather than a solid border, so it reads on every hue.
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+  transition: transform var(--mm-duration-fast) var(--mm-ease-spring);
+
+  &:hover {
+    transform: scale(1.08);
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--mm-focus);
+    outline-offset: 2px;
+  }
+}
+
+.selected {
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 12%),
+    0 0 0 2px var(--mm-surface),
+    0 0 0 4px currentcolor;
+}
+
+.input {
+  @include visually-hidden;
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+.check {
+  color: #fff;
+  // Keeps the tick legible on light swatches too.
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 45%));
+}

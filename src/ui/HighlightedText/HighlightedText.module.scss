@@ -1,0 +1,9 @@
+.mark {
+  padding: 0 1px;
+  background: color-mix(in srgb, var(--mm-warning) 26%, transparent);
+  border-radius: var(--mm-radius-xs);
+  // Inherit rather than the UA's black-on-yellow, which is unreadable in dark
+  // mode and clashes with the palette.
+  color: inherit;
+  font-weight: var(--mm-weight-medium);
+}

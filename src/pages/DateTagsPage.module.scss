@@ -1,0 +1,82 @@
+.years {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-6);
+}
+
+.year {
+  margin-bottom: var(--mm-space-2);
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-sm);
+  font-weight: var(--mm-weight-semibold);
+  letter-spacing: 0.04em;
+}
+
+.list {
+  display: grid;
+  gap: var(--mm-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-3);
+  padding: var(--mm-space-1) var(--mm-space-2);
+  border-radius: var(--mm-radius-md);
+  transition: background-color var(--mm-duration-fast) var(--mm-ease);
+
+  &:hover {
+    background: var(--mm-surface-2);
+  }
+}
+
+.dateButton {
+  @include focus-ring;
+
+  display: flex;
+  align-items: baseline;
+  gap: var(--mm-space-2);
+  min-width: 0;
+  padding: var(--mm-space-2);
+  border-radius: var(--mm-radius-sm);
+  text-align: left;
+
+  &:hover .label {
+    color: var(--mm-primary);
+  }
+}
+
+.icon {
+  align-self: center;
+  flex: none;
+  color: var(--mm-text-subtle);
+}
+
+.label {
+  @include truncate;
+
+  font-weight: var(--mm-weight-medium);
+}
+
+.rawDate {
+  flex: none;
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-xs);
+}
+
+.count,
+.countZero {
+  margin-right: auto;
+  font-size: var(--mm-text-sm);
+}
+
+.count {
+  color: var(--mm-text-subtle);
+}
+
+.countZero {
+  color: var(--mm-warning);
+}

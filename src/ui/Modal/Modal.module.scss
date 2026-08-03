@@ -1,0 +1,153 @@
+// showModal() promotes the element to the top layer, so it needs no z-index and
+// nothing in the app can ever paint over it.
+.dialog {
+  max-width: 100vw;
+  max-height: 100dvh;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: hidden;
+
+  &:not([open]) {
+    display: none;
+  }
+
+  &[open] {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  @include media-up('md') {
+    &[open] {
+      align-items: center;
+      padding: var(--mm-space-6);
+    }
+  }
+
+  &::backdrop {
+    background: var(--mm-overlay);
+    backdrop-filter: blur(2px);
+  }
+}
+
+.panel {
+  @include scrollbar-thin;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 92dvh;
+  padding-bottom: var(--mm-safe-bottom);
+  overflow: hidden;
+  background: var(--mm-surface);
+  // Bottom sheet on mobile: rounded on top, flush with the bottom edge.
+  border-radius: var(--mm-radius-xl) var(--mm-radius-xl) 0 0;
+  box-shadow: var(--mm-shadow-3);
+
+  &:focus {
+    outline: none;
+  }
+
+  @include media-up('md') {
+    max-height: 85dvh;
+    padding-bottom: 0;
+    border: 1px solid var(--mm-border);
+    border-radius: var(--mm-radius-lg);
+  }
+}
+
+.sm {
+  @include media-up('md') {
+    max-width: 24rem;
+  }
+}
+
+.md {
+  @include media-up('md') {
+    max-width: 34rem;
+  }
+}
+
+.lg {
+  @include media-up('md') {
+    max-width: 46rem;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--mm-space-4);
+  padding: var(--mm-space-5) var(--mm-space-5) var(--mm-space-3);
+}
+
+// When the title is hidden the header collapses to just the close button,
+// floating over the content.
+.headerBare {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: var(--mm-space-3);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-1);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--mm-text-lg);
+  font-weight: var(--mm-weight-semibold);
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+.description {
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+}
+
+.close {
+  @include focus-ring;
+
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-text-subtle);
+
+  &:hover {
+    background: var(--mm-surface-2);
+    color: var(--mm-text);
+  }
+}
+
+.body {
+  @include scrollbar-thin;
+
+  flex: 1;
+  padding: 0 var(--mm-space-5) var(--mm-space-5);
+  overflow-y: auto;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--mm-space-2);
+  padding: var(--mm-space-4) var(--mm-space-5);
+  border-top: 1px solid var(--mm-border);
+  background: var(--mm-surface);
+}

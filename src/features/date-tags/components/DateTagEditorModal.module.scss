@@ -1,0 +1,22 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-5);
+}
+
+.usage {
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-sm);
+}
+
+.explain {
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+  line-height: var(--mm-leading-normal);
+}
+
+.secondaryActions {
+  display: flex;
+  padding-top: var(--mm-space-4);
+  border-top: 1px solid var(--mm-border);
+}

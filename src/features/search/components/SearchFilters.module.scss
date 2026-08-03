@@ -1,0 +1,212 @@
+.root {
+  margin-bottom: var(--mm-space-5);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mm-space-2);
+}
+
+.toggle {
+  @include focus-ring;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mm-space-2);
+  height: 2.25rem;
+  padding: 0 var(--mm-space-3);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-md);
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+  font-weight: var(--mm-weight-medium);
+
+  &:hover {
+    border-color: var(--mm-border-strong);
+    color: var(--mm-text);
+  }
+}
+
+.toggleOpen {
+  background: var(--mm-primary-soft);
+  border-color: transparent;
+  color: var(--mm-primary);
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 4px;
+  background: var(--mm-primary);
+  border-radius: var(--mm-radius-full);
+  color: var(--mm-primary-contrast);
+  font-size: 0.625rem;
+  font-weight: var(--mm-weight-bold);
+}
+
+.sortField {
+  display: inline-flex;
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+.sortSelect {
+  @include focus-ring;
+
+  height: 2.25rem;
+  padding: 0 var(--mm-space-2);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-md);
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+
+  &:hover {
+    border-color: var(--mm-border-strong);
+  }
+}
+
+.count {
+  margin-left: auto;
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-sm);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-5);
+  margin-top: var(--mm-space-3);
+  padding: var(--mm-space-4);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-lg);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-3);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mm-space-3);
+}
+
+.sectionTitle {
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-xs);
+  font-weight: var(--mm-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.matchToggle {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--mm-surface-2);
+  border-radius: var(--mm-radius-md);
+}
+
+.matchButton,
+.matchActive {
+  @include focus-ring(-2px);
+
+  height: 1.5rem;
+  padding: 0 var(--mm-space-2);
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-xs);
+  font-weight: var(--mm-weight-medium);
+}
+
+.matchActive {
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  box-shadow: var(--mm-shadow-1);
+}
+
+.chips {
+  @include scrollbar-thin;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mm-space-2);
+  max-height: 11rem;
+  overflow-y: auto;
+}
+
+.more {
+  @include focus-ring;
+
+  height: 1.5rem;
+  padding: 0 var(--mm-space-3);
+  border-radius: var(--mm-radius-full);
+  color: var(--mm-primary);
+  font-size: var(--mm-text-xs);
+  font-weight: var(--mm-weight-semibold);
+
+  &:hover {
+    background: var(--mm-primary-soft);
+  }
+}
+
+.dateRange {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mm-space-3);
+}
+
+.dateField {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-2);
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+}
+
+.dateInput {
+  @include focus-ring(0);
+
+  height: 2.25rem;
+  padding: 0 var(--mm-space-2);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-text);
+  font-size: var(--mm-text-sm);
+
+  &:focus-visible {
+    border-color: var(--mm-primary);
+    outline-offset: 0;
+  }
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mm-space-3);
+  font-size: var(--mm-text-sm);
+  cursor: pointer;
+
+  input {
+    margin-top: 3px;
+    accent-color: var(--mm-primary);
+  }
+}
+
+.checkboxHint {
+  display: block;
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-xs);
+}

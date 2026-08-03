@@ -1,0 +1,41 @@
+.root {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--mm-space-6) var(--mm-space-4);
+  // A quiet wash of the accent colour behind the card, so the sign-in screen
+  // does not read as a blank form.
+  background:
+    radial-gradient(60rem 40rem at 50% -20%, var(--mm-primary-soft), transparent 70%), var(--mm-bg);
+}
+
+.panel {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mm-space-2);
+  margin-bottom: var(--mm-space-8);
+  text-align: center;
+}
+
+.mark {
+  display: block;
+  margin-bottom: var(--mm-space-2);
+}
+
+.wordmark {
+  font-size: var(--mm-text-2xl);
+  font-weight: var(--mm-weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.tagline {
+  max-width: 24ch;
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+}

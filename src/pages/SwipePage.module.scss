@@ -1,0 +1,94 @@
+.loading {
+  display: grid;
+  place-items: center;
+  padding: var(--mm-space-16) 0;
+  color: var(--mm-text-subtle);
+}
+
+.scopeToggle {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--mm-surface-2);
+  border: none;
+  border-radius: var(--mm-radius-md);
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+.scopeButton {
+  display: inline-flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 0 var(--mm-space-3);
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+  font-weight: var(--mm-weight-medium);
+  cursor: pointer;
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--mm-focus);
+    outline-offset: -2px;
+  }
+}
+
+.scopeActive {
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  box-shadow: var(--mm-shadow-1);
+}
+
+.deck {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-4);
+}
+
+.progress {
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.cardArea {
+  // `popLayout` takes the outgoing card out of the flow with position:absolute,
+  // so it needs a positioning context here or it would escape to the page.
+  position: relative;
+  // Reserves the card's height so the layout does not jump between memories of
+  // different lengths.
+  min-height: 18rem;
+
+  > * {
+    width: 100%;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--mm-space-2);
+}
+
+.shortcuts {
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-xs);
+  text-align: center;
+
+  // Hidden where there is no keyboard.
+  @media (hover: none) {
+    display: none;
+  }
+
+  kbd {
+    padding: 2px var(--mm-space-1);
+    background: var(--mm-surface-2);
+    border: 1px solid var(--mm-border);
+    border-radius: var(--mm-radius-xs);
+    font-family: var(--mm-font-sans);
+    font-size: 0.6875rem;
+  }
+}

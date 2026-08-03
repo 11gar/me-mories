@@ -1,0 +1,128 @@
+.calendar {
+  @include surface;
+
+  padding: var(--mm-space-4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mm-space-2);
+  margin-bottom: var(--mm-space-3);
+}
+
+.monthLabel {
+  font-size: var(--mm-text-md);
+  font-weight: var(--mm-weight-semibold);
+  // Month names come from date-fns in lower case.
+  text-transform: capitalize;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: var(--mm-space-1);
+  table-layout: fixed;
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+.weekday {
+  padding-bottom: var(--mm-space-1);
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-xs);
+  font-weight: var(--mm-weight-regular);
+  text-align: center;
+
+  abbr {
+    text-decoration: none;
+  }
+}
+
+.cell {
+  padding: 0;
+}
+
+.day {
+  @include focus-ring(-2px);
+
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-text);
+  font-size: var(--mm-text-sm);
+  transition:
+    background-color var(--mm-duration-fast) var(--mm-ease),
+    border-color var(--mm-duration-fast) var(--mm-ease);
+
+  &:hover {
+    border-color: var(--mm-primary);
+  }
+}
+
+.dayNumber {
+  line-height: 1;
+}
+
+.outside {
+  color: var(--mm-text-subtle);
+  opacity: 0.55;
+}
+
+.today .dayNumber {
+  font-weight: var(--mm-weight-bold);
+  color: var(--mm-primary);
+}
+
+.selected {
+  background: var(--mm-primary) !important;
+  border-color: var(--mm-primary);
+  color: var(--mm-primary-contrast);
+
+  .dayNumber {
+    color: var(--mm-primary-contrast);
+  }
+
+  .dot {
+    background: var(--mm-primary-contrast);
+  }
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  background: var(--mm-primary);
+  border-radius: var(--mm-radius-full);
+}
+
+// Density heatmap: the accent colour mixed into the surface at four strengths,
+// so the busiest stretches of the year are visible at a glance.
+.level0 {
+  background: var(--mm-surface-2);
+}
+
+.level1 {
+  background: color-mix(in srgb, var(--mm-primary) 12%, var(--mm-surface-2));
+}
+
+.level2 {
+  background: color-mix(in srgb, var(--mm-primary) 26%, var(--mm-surface-2));
+}
+
+.level3 {
+  background: color-mix(in srgb, var(--mm-primary) 42%, var(--mm-surface-2));
+}
+
+.level4 {
+  background: color-mix(in srgb, var(--mm-primary) 58%, var(--mm-surface-2));
+}

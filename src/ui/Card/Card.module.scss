@@ -1,0 +1,29 @@
+.card {
+  @include surface;
+
+  transition:
+    border-color var(--mm-duration-fast) var(--mm-ease),
+    box-shadow var(--mm-duration-fast) var(--mm-ease),
+    transform var(--mm-duration-fast) var(--mm-ease);
+}
+
+.flat {
+  box-shadow: none;
+}
+
+.raised {
+  box-shadow: var(--mm-shadow-2);
+}
+
+.interactive {
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--mm-border-strong);
+    box-shadow: var(--mm-shadow-2);
+  }
+
+  &:has(:focus-visible) {
+    border-color: var(--mm-primary);
+  }
+}

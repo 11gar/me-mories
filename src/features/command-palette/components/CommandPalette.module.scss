@@ -1,0 +1,107 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-3);
+  padding-top: var(--mm-space-2);
+}
+
+.searchRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--mm-space-3);
+  color: var(--mm-text-subtle);
+  pointer-events: none;
+}
+
+.input {
+  @include focus-ring(0);
+
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 var(--mm-space-4) 0 var(--mm-space-10);
+  background: var(--mm-surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--mm-radius-md);
+  font-size: var(--mm-text-md);
+
+  &::placeholder {
+    color: var(--mm-text-subtle);
+  }
+
+  &:focus-visible {
+    background: var(--mm-surface);
+    border-color: var(--mm-primary);
+    outline-offset: 0;
+  }
+}
+
+.list {
+  @include scrollbar-thin;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 22rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--mm-space-3);
+  width: 100%;
+  padding: var(--mm-space-2) var(--mm-space-3);
+  border-radius: var(--mm-radius-sm);
+  color: var(--mm-text);
+  font-size: var(--mm-text-sm);
+  text-align: left;
+  cursor: pointer;
+
+  kbd {
+    margin-left: auto;
+    padding: 2px var(--mm-space-1);
+    background: var(--mm-surface-2);
+    border: 1px solid var(--mm-border);
+    border-radius: var(--mm-radius-xs);
+    color: var(--mm-text-subtle);
+    font-family: var(--mm-font-sans);
+    font-size: 0.6875rem;
+  }
+}
+
+// Highlight follows the keyboard, not the focus ring: focus stays in the input
+// so typing never breaks, which is the whole point of a command palette.
+.itemActive {
+  background: var(--mm-primary-soft);
+  color: var(--mm-primary);
+}
+
+.itemIcon {
+  flex: none;
+  color: var(--mm-text-subtle);
+}
+
+.itemActive .itemIcon {
+  color: var(--mm-primary);
+}
+
+.itemLabel {
+  @include truncate;
+
+  min-width: 0;
+}
+
+.empty {
+  padding: var(--mm-space-4);
+  color: var(--mm-text-subtle);
+  font-size: var(--mm-text-sm);
+  text-align: center;
+}

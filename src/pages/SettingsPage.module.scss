@@ -1,0 +1,100 @@
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-4);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--mm-space-3);
+  padding: var(--mm-space-5);
+}
+
+.sectionTitle {
+  font-size: var(--mm-text-base);
+  font-weight: var(--mm-weight-semibold);
+}
+
+.email {
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+}
+
+.sectionHint {
+  max-width: 52ch;
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+  line-height: var(--mm-leading-normal);
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mm-space-2);
+}
+
+.link {
+  @include focus-ring;
+
+  border-radius: var(--mm-radius-md);
+}
+
+.themeOptions {
+  display: flex;
+  gap: var(--mm-space-2);
+  flex-wrap: wrap;
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  @include visually-hidden;
+}
+
+// The radio itself is hidden; the label is the control. Focus is forwarded from
+// the input so keyboard users still see a ring on the visible element.
+.themeRadio {
+  @include visually-hidden;
+}
+
+.themeOption {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  gap: var(--mm-space-2);
+  height: 2.5rem;
+  padding: 0 var(--mm-space-4);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-md);
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-sm);
+  font-weight: var(--mm-weight-medium);
+  transition:
+    background-color var(--mm-duration-fast) var(--mm-ease),
+    border-color var(--mm-duration-fast) var(--mm-ease),
+    color var(--mm-duration-fast) var(--mm-ease);
+
+  &:hover {
+    border-color: var(--mm-border-strong);
+    color: var(--mm-text);
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--mm-focus);
+    outline-offset: 2px;
+  }
+}
+
+.themeOptionActive {
+  background: var(--mm-primary-soft);
+  border-color: transparent;
+  color: var(--mm-primary);
+
+  &:hover {
+    color: var(--mm-primary);
+  }
+}
