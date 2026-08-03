@@ -10,12 +10,12 @@ export type ThemePreference = z.infer<typeof themePreferenceSchema>;
  * an older document stays valid — every field has a default.
  */
 export const userSettingsSchema = z.object({
-  theme: themePreferenceSchema.default('system'),
+  theme: themePreferenceSchema.default('light'),
 });
 
 export type UserSettings = z.infer<typeof userSettingsSchema>;
 
-export const defaultUserSettings: UserSettings = { theme: 'system' };
+export const defaultUserSettings: UserSettings = { theme: 'light' };
 
 export const userProfileSchema = z.object({
   id: userIdSchema,
