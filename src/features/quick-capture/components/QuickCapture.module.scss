@@ -90,10 +90,39 @@
 
 .datePanel {
   display: flex;
-  gap: var(--mm-space-2);
+  flex-direction: column;
+  gap: var(--mm-space-3);
   padding: var(--mm-space-3);
   background: var(--mm-surface-2);
   border-radius: var(--mm-radius-md);
+}
+
+.quickDates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mm-space-2);
+}
+
+.quickDate {
+  @include focus-ring;
+
+  height: 1.75rem;
+  padding: 0 var(--mm-space-3);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-full);
+  color: var(--mm-text-muted);
+  font-size: var(--mm-text-xs);
+
+  &:hover {
+    border-color: var(--mm-primary);
+    color: var(--mm-text);
+  }
+}
+
+.dateRow {
+  display: flex;
+  gap: var(--mm-space-2);
 }
 
 .dateInput {

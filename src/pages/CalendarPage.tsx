@@ -33,7 +33,10 @@ export function CalendarPage() {
   const dateTagsById = useDateTagsStore((state) => state.byId);
   const { edit, remove } = useMemoryActions();
 
-  const [axis, setAxis] = useState<Axis>('created');
+  // The axis is derived, not stored: it defaults to the event date whenever
+  // there is one to file by, and only sticks to a value once the user picks it.
+  // A note written today about yesterday then lands on yesterday with no toggle.
+  const [axisChoice, setAxisChoice] = useState<Axis | null>(null);
   const [month, setMonth] = useState(() => new Date());
   const [selected, setSelected] = useState<IsoDate>(() => todayIso());
 
@@ -41,6 +44,13 @@ export function CalendarPage() {
     () => (dateTagId: string) => dateTagsById[dateTagId]?.date,
     [dateTagsById],
   );
+
+  const hasEventDates = useMemo(
+    () => memories.some((memory) => memory.dateTagIds.length > 0),
+    [memories],
+  );
+
+  const axis: Axis = axisChoice ?? (hasEventDates ? 'event' : 'created');
 
   const counts = useMemo(
     () => (axis === 'created' ? countByDay(memories) : countByEventDay(memories, dateOf)),
@@ -56,11 +66,6 @@ export function CalendarPage() {
       memory.dateTagIds.some((dateTagId) => dateOf(dateTagId) === selected),
     );
   }, [axis, memories, selected, dateOf]);
-
-  const hasEventDates = useMemo(
-    () => memories.some((memory) => memory.dateTagIds.length > 0),
-    [memories],
-  );
 
   const selectedDate = fromIsoDate(selected);
 
@@ -99,7 +104,7 @@ export function CalendarPage() {
                 name="calendar-axis"
                 value={value}
                 checked={axis === value}
-                onChange={() => setAxis(value)}
+                onChange={() => setAxisChoice(value)}
                 className={styles.srOnly}
               />
               {AXIS_LABELS[value]}

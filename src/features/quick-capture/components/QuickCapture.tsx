@@ -1,9 +1,10 @@
+import { subDays } from 'date-fns';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useToast } from '@/app/providers/toastContext';
 import { toAppError } from '@/domain/errors';
 import type { DateTagId, IsoDate, Tag, TagId } from '@/domain/models';
-import { asIsoDate, isIsoDate, todayIso } from '@/domain/models';
+import { asIsoDate, isIsoDate, toIsoDate, todayIso } from '@/domain/models';
 import { parseQuickCapture, removeTokensWithValue } from '@/domain/services/quickParse';
 import { TagPickerPanel } from '@/features/tags/components/TagPickerPanel';
 import { useLocalStorage } from '@/hooks';
@@ -32,6 +33,16 @@ interface Draft {
 }
 
 const EMPTY_DRAFT: Draft = { text: '', tagIds: [], dateTagIds: [] };
+
+/**
+ * One-tap shortcuts for the dates people reach for most: something noted a day
+ * or two after it happened. `offset` is days back from today.
+ */
+const QUICK_DATES: ReadonlyArray<{ label: string; offset: number }> = [
+  { label: "Aujourd'hui", offset: 0 },
+  { label: 'Hier', offset: 1 },
+  { label: 'Avant-hier', offset: 2 },
+];
 
 /**
  * The capture overlay — the single most important screen in the app.
@@ -126,10 +137,19 @@ export function QuickCapture() {
 
   function addDate(value: IsoDate) {
     // Append as an inline token so the text stays the single source of truth
-    // for parsed dates.
-    setText((current) => `${current.trimEnd()} @${value}`.trim());
+    // for parsed dates. Skip it when that day is already tagged, so tapping the
+    // same shortcut twice does not litter the text with a duplicate token.
+    setText((current) =>
+      parseQuickCapture(current).dates.includes(value)
+        ? current
+        : `${current.trimEnd()} @${value}`.trim(),
+    );
     setShowDatePicker(false);
     setDateInput('');
+  }
+
+  function addRelativeDate(offset: number) {
+    addDate(offset === 0 ? todayIso() : toIsoDate(subDays(new Date(), offset)));
   }
 
   async function handleSave() {
@@ -318,23 +338,38 @@ export function QuickCapture() {
 
         {showDatePicker ? (
           <div className={styles.datePanel}>
-            <input
-              type="date"
-              className={styles.dateInput}
-              value={dateInput}
-              onChange={(event) => setDateInput(event.target.value)}
-              aria-label="Date à associer"
-            />
-            <Button
-              size="sm"
-              variant="primary"
-              disabled={!isIsoDate(dateInput)}
-              onClick={() => {
-                if (isIsoDate(dateInput)) addDate(asIsoDate(dateInput));
-              }}
-            >
-              Ajouter
-            </Button>
+            <div className={styles.quickDates}>
+              {QUICK_DATES.map(({ label, offset }) => (
+                <button
+                  key={label}
+                  type="button"
+                  className={styles.quickDate}
+                  onClick={() => addRelativeDate(offset)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.dateRow}>
+              <input
+                type="date"
+                className={styles.dateInput}
+                value={dateInput}
+                onChange={(event) => setDateInput(event.target.value)}
+                aria-label="Date à associer"
+              />
+              <Button
+                size="sm"
+                variant="primary"
+                disabled={!isIsoDate(dateInput)}
+                onClick={() => {
+                  if (isIsoDate(dateInput)) addDate(asIsoDate(dateInput));
+                }}
+              >
+                Ajouter
+              </Button>
+            </div>
           </div>
         ) : null}
       </div>
