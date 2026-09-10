@@ -13,6 +13,7 @@
 export const NAV_LABELS = {
   home: 'Accueil',
   memories: 'Mémoires',
+  todos: 'À faire',
   calendar: 'Calendrier',
   swipe: 'Relire',
   tags: 'Tags',
@@ -32,6 +33,8 @@ export const ACTIONS = {
   retry: 'Réessayer',
   search: 'Rechercher',
   newMemory: 'Nouvelle mémoire',
+  newTodo: 'Nouvelle tâche',
+  postpone: 'Remettre à demain',
 } as const;
 
 export const AUTH_LABELS = {

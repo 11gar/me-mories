@@ -9,16 +9,22 @@ import {
   MEMORY_SCHEMA_VERSION,
   MEMORY_TEXT_MAX_LENGTH,
   TAG_TITLE_MAX_LENGTH,
+  TODO_MAX_TAGS,
+  TODO_SCHEMA_VERSION,
+  TODO_TITLE_MAX_LENGTH,
   asDateTagId,
   asMemoryId,
   asTagId,
+  asTodoId,
   asUserId,
   defaultUserSettings,
   hexColorSchema,
   isoDateSchema,
+  recurrenceRuleSchema,
+  todoStatusSchema,
   userSettingsSchema,
 } from '@/domain/models';
-import type { DateTag, Memory, Tag, UserProfile } from '@/domain/models';
+import type { DateTag, Memory, Tag, Todo, UserProfile } from '@/domain/models';
 
 /**
  * The boundary between Firestore documents and domain entities.
@@ -144,6 +150,64 @@ export function dateTagToDocument(dateTag: DateTag): DocumentData {
     label: dateTag.label,
     createdAt: Timestamp.fromDate(dateTag.createdAt),
     updatedAt: Timestamp.fromDate(dateTag.updatedAt),
+  };
+}
+
+// ----------------------------------------------------------------------- Todo
+
+const todoDocumentSchema = z.object({
+  title: z.string().min(1).max(TODO_TITLE_MAX_LENGTH),
+  dueDate: isoDateSchema.nullable().default(null),
+  recurrence: recurrenceRuleSchema.nullable().default(null),
+  status: todoStatusSchema.default('todo'),
+  tagIds: z.array(z.string().min(1)).max(TODO_MAX_TAGS).default([]),
+  seriesId: z.string().min(1).nullable().default(null),
+  postponeCount: z.number().int().min(0).default(0),
+  completedAt: nullableTimestampSchema,
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
+  deletedAt: nullableTimestampSchema,
+  schemaVersion: z.number().int().min(1).default(TODO_SCHEMA_VERSION),
+});
+
+export function todoFromDocument(id: string, data: DocumentData): Todo {
+  const parsed = parseDocument(todoDocumentSchema, data, 'todo', id);
+
+  return {
+    id: asTodoId(id),
+    title: parsed.title,
+    dueDate: parsed.dueDate,
+    recurrence: parsed.recurrence,
+    status: parsed.status,
+    tagIds: parsed.tagIds.map(asTagId),
+    seriesId: parsed.seriesId === null ? null : asTodoId(parsed.seriesId),
+    postponeCount: parsed.postponeCount,
+    completedAt: parsed.completedAt,
+    createdAt: parsed.createdAt,
+    updatedAt: parsed.updatedAt,
+    deletedAt: parsed.deletedAt,
+    schemaVersion: parsed.schemaVersion,
+  };
+}
+
+export function todoToDocument(todo: Todo): DocumentData {
+  return {
+    title: todo.title,
+    // A civil day, stored as the same `YYYY-MM-DD` string as `DateTag.date` —
+    // a deadline read in another timezone must not slide by a day.
+    dueDate: todo.dueDate,
+    // A plain nested map rather than a serialised rule string: it stays legible
+    // in the Firestore console and can be validated field by field by the rules.
+    recurrence: todo.recurrence === null ? null : { ...todo.recurrence },
+    status: todo.status,
+    tagIds: [...todo.tagIds],
+    seriesId: todo.seriesId,
+    postponeCount: todo.postponeCount,
+    completedAt: todo.completedAt === null ? null : Timestamp.fromDate(todo.completedAt),
+    createdAt: Timestamp.fromDate(todo.createdAt),
+    updatedAt: Timestamp.fromDate(todo.updatedAt),
+    deletedAt: todo.deletedAt === null ? null : Timestamp.fromDate(todo.deletedAt),
+    schemaVersion: todo.schemaVersion,
   };
 }
 

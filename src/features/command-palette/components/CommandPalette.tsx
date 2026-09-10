@@ -92,6 +92,15 @@ export function CommandPalette() {
         },
       },
       {
+        id: 'todos',
+        label: 'À faire',
+        icon: 'checkSquare',
+        run: () => {
+          close();
+          void navigate(ROUTES.todos);
+        },
+      },
+      {
         id: 'swipe',
         label: 'Relire',
         icon: 'shuffle',

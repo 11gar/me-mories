@@ -18,6 +18,7 @@ const MemoriesPage = lazy(async () => ({
 const MemoryDetailPage = lazy(async () => ({
   default: (await import('@/pages/MemoryDetailPage')).MemoryDetailPage,
 }));
+const TodosPage = lazy(async () => ({ default: (await import('@/pages/TodosPage')).TodosPage }));
 const HomePage = lazy(async () => ({ default: (await import('@/pages/HomePage')).HomePage }));
 const CalendarPage = lazy(async () => ({
   default: (await import('@/pages/CalendarPage')).CalendarPage,
@@ -57,6 +58,7 @@ export function AppRoutes() {
             <Route path={ROUTES.home} element={<HomePage />} />
             <Route path={ROUTES.memories} element={<MemoriesPage />} />
             <Route path={ROUTES.memory} element={<MemoryDetailPage />} />
+            <Route path={ROUTES.todos} element={<TodosPage />} />
             <Route path={ROUTES.calendar} element={<CalendarPage />} />
             <Route path={ROUTES.swipe} element={<SwipePage />} />
             <Route path={ROUTES.tags} element={<TagsPage />} />

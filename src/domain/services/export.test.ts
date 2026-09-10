@@ -13,10 +13,16 @@ describe('toJsonExport', () => {
     const memory = makeMemory({ text: 'Une note', tagIds: [tag.id] });
 
     const parsed = JSON.parse(
-      toJsonExport({ memories: [memory], tags: [tag], dateTags: [], exportedAt: EXPORTED_AT }),
+      toJsonExport({
+        memories: [memory],
+        tags: [tag],
+        dateTags: [],
+        todos: [],
+        exportedAt: EXPORTED_AT,
+      }),
     );
 
-    expect(parsed.schemaVersion).toBe(1);
+    expect(parsed.schemaVersion).toBe(2);
     expect(parsed.memories).toHaveLength(1);
     expect(parsed.memories[0].text).toBe('Une note');
     expect(parsed.memories[0].tagIds).toEqual([tag.id]);
@@ -27,7 +33,13 @@ describe('toJsonExport', () => {
     const memory = makeMemory({ createdAt: new Date(Date.UTC(2024, 2, 12, 9, 30)) });
 
     const parsed = JSON.parse(
-      toJsonExport({ memories: [memory], tags: [], dateTags: [], exportedAt: EXPORTED_AT }),
+      toJsonExport({
+        memories: [memory],
+        tags: [],
+        dateTags: [],
+        todos: [],
+        exportedAt: EXPORTED_AT,
+      }),
     );
 
     expect(parsed.memories[0].createdAt).toBe('2024-03-12T09:30:00.000Z');
@@ -38,7 +50,13 @@ describe('toJsonExport', () => {
     const deleted = makeMemory({ deletedAt: new Date(2026, 0, 5) });
 
     const parsed = JSON.parse(
-      toJsonExport({ memories: [deleted], tags: [], dateTags: [], exportedAt: EXPORTED_AT }),
+      toJsonExport({
+        memories: [deleted],
+        tags: [],
+        dateTags: [],
+        todos: [],
+        exportedAt: EXPORTED_AT,
+      }),
     );
 
     expect(parsed.memories[0].deletedAt).not.toBeNull();
@@ -59,6 +77,7 @@ describe('toMarkdownExport', () => {
       memories: [memory],
       tags: [tag],
       dateTags: [dateTag],
+      todos: [],
       exportedAt: EXPORTED_AT,
     });
 
@@ -76,6 +95,7 @@ describe('toMarkdownExport', () => {
       memories: [older, newer],
       tags: [],
       dateTags: [],
+      todos: [],
       exportedAt: EXPORTED_AT,
     });
 
@@ -88,6 +108,7 @@ describe('toMarkdownExport', () => {
       memories: [makeMemory({ text: 'Sans tag' })],
       tags: [],
       dateTags: [],
+      todos: [],
       exportedAt: EXPORTED_AT,
     });
 
@@ -101,6 +122,7 @@ describe('toMarkdownExport', () => {
       memories: [memory],
       tags: [],
       dateTags: [],
+      todos: [],
       exportedAt: EXPORTED_AT,
     });
 

@@ -1,0 +1,104 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-5);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-2);
+  padding: 0;
+  border: 0;
+
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--mm-space-1);
+  font-size: var(--mm-text-sm);
+  font-weight: var(--mm-weight-medium);
+  color: var(--mm-text-muted);
+}
+
+.legendHint {
+  font-weight: var(--mm-weight-regular);
+  color: var(--mm-text-subtle);
+}
+
+.quickDates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mm-space-2);
+}
+
+.chipButton {
+  display: inline-flex;
+  gap: var(--mm-space-1);
+  align-items: center;
+  padding: var(--mm-space-2) var(--mm-space-3);
+  font-size: var(--mm-text-sm);
+  color: var(--mm-text);
+  cursor: pointer;
+  background: var(--mm-surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--mm-radius-full);
+  transition: background var(--mm-duration-fast) var(--mm-ease);
+
+  @include focus-ring;
+
+  &:hover:not(:disabled) {
+    background: var(--mm-surface-hover);
+    border-color: var(--mm-border-strong);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.chipActive {
+  color: var(--mm-primary);
+  background: var(--mm-primary-soft);
+  border-color: var(--mm-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--mm-primary-soft-hover);
+  }
+}
+
+.dateInput {
+  align-self: flex-start;
+  padding: var(--mm-space-2) var(--mm-space-3);
+  font: inherit;
+  font-size: var(--mm-text-sm);
+  color: var(--mm-text);
+  background: var(--mm-surface);
+  border: 1px solid var(--mm-border-strong);
+  border-radius: var(--mm-radius-sm);
+
+  @include focus-ring;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mm-space-2);
+}
+
+.note {
+  display: flex;
+  gap: var(--mm-space-2);
+  align-items: flex-start;
+  font-size: var(--mm-text-xs);
+  line-height: var(--mm-leading-snug);
+  color: var(--mm-text-muted);
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}

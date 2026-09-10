@@ -12,7 +12,14 @@ import { exportFilename, toJsonExport, toMarkdownExport } from '@/domain/service
 import { criteriaToSearchParams, emptySearchCriteria } from '@/domain/services/searchQuery';
 import { cn } from '@/lib/cn';
 import { downloadTextFile } from '@/lib/download';
-import { emptyTrash, useDateTagsStore, useMemoriesStore, useTagsStore } from '@/store';
+import {
+  emptyTodoTrash,
+  emptyTrash,
+  useDateTagsStore,
+  useMemoriesStore,
+  useTagsStore,
+  useTodosStore,
+} from '@/store';
 import { Button, Card, Icon, Page } from '@/ui';
 import type { IconName } from '@/ui';
 
@@ -34,6 +41,8 @@ export function SettingsPage() {
   const trashed = useMemoriesStore((state) => state.trashed);
   const tags = useTagsStore((state) => state.all);
   const dateTags = useDateTagsStore((state) => state.all);
+  const todos = useTodosStore((state) => state.all);
+  const trashedTodos = useTodosStore((state) => state.trashed);
 
   const [signingOut, setSigningOut] = useState(false);
   const [confirmingPurge, setConfirmingPurge] = useState(false);
@@ -49,7 +58,7 @@ export function SettingsPage() {
   }
 
   function handleExport(format: 'json' | 'md') {
-    const input = { memories, tags, dateTags };
+    const input = { memories, tags, dateTags, todos };
 
     downloadTextFile(
       format === 'json' ? toJsonExport(input) : toMarkdownExport(input),
@@ -61,7 +70,10 @@ export function SettingsPage() {
   async function handleEmptyTrash() {
     setPurging(true);
     try {
-      await emptyTrash();
+      // Both collections soft-delete, so both are purged by the one gesture —
+      // a hidden pile of deleted todos with no way to empty it would grow
+      // forever, which is exactly what the trash exists to prevent.
+      await Promise.all([emptyTrash(), emptyTodoTrash()]);
       showToast('Corbeille vidée.', { tone: 'success' });
       setConfirmingPurge(false);
     } catch (error) {
@@ -147,27 +159,38 @@ export function SettingsPage() {
         <Card className={styles.section}>
           <h2 className={styles.sectionTitle}>Corbeille</h2>
 
-          {trashed.length === 0 ? (
+          {trashed.length === 0 && trashedTodos.length === 0 ? (
             <p className={styles.sectionHint}>La corbeille est vide.</p>
           ) : (
             <>
               <p className={styles.sectionHint}>
-                {trashed.length} mémoire{trashed.length > 1 ? 's' : ''} supprimée
-                {trashed.length > 1 ? 's' : ''}. Elles restent restaurables tant que vous ne videz
+                {[
+                  trashed.length > 0
+                    ? `${trashed.length} mémoire${trashed.length > 1 ? 's' : ''}`
+                    : null,
+                  trashedTodos.length > 0
+                    ? `${trashedTodos.length} tâche${trashedTodos.length > 1 ? 's' : ''}`
+                    : null,
+                ]
+                  .filter((part) => part !== null)
+                  .join(' et ')}{' '}
+                en attente de suppression définitive. Tout reste restaurable tant que vous ne videz
                 pas la corbeille.
               </p>
 
               <div className={styles.buttonRow}>
-                <Link
-                  to={searchPath(
-                    criteriaToSearchParams({ ...emptySearchCriteria, scope: 'trash' }),
-                  )}
-                  className={styles.link}
-                >
-                  <Button variant="secondary" iconLeft={<Icon name="restore" size={17} />}>
-                    Consulter
-                  </Button>
-                </Link>
+                {trashed.length === 0 ? null : (
+                  <Link
+                    to={searchPath(
+                      criteriaToSearchParams({ ...emptySearchCriteria, scope: 'trash' }),
+                    )}
+                    className={styles.link}
+                  >
+                    <Button variant="secondary" iconLeft={<Icon name="restore" size={17} />}>
+                      Consulter
+                    </Button>
+                  </Link>
+                )}
 
                 {confirmingPurge ? (
                   <>

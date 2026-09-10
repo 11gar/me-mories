@@ -1,5 +1,5 @@
-import { asDateTagId, asIsoDate, asMemoryId, asTagId } from '@/domain/models';
-import type { DateTag, Memory, Tag } from '@/domain/models';
+import { asDateTagId, asIsoDate, asMemoryId, asTagId, asTodoId } from '@/domain/models';
+import type { DateTag, Memory, Tag, Todo } from '@/domain/models';
 
 /**
  * Test fixtures.
@@ -56,6 +56,27 @@ export function makeDateTag(overrides: Partial<DateTag> = {}): DateTag {
     label: 'Voyage au Japon',
     createdAt,
     updatedAt: overrides.updatedAt ?? createdAt,
+    ...overrides,
+  };
+}
+
+export function makeTodo(overrides: Partial<Todo> = {}): Todo {
+  const createdAt = overrides.createdAt ?? new Date(2026, 0, 1);
+
+  return {
+    id: asTodoId(nextId('todo')),
+    title: 'Faire les courses',
+    dueDate: null,
+    recurrence: null,
+    status: 'todo',
+    tagIds: [],
+    seriesId: null,
+    postponeCount: 0,
+    completedAt: null,
+    createdAt,
+    updatedAt: overrides.updatedAt ?? createdAt,
+    deletedAt: null,
+    schemaVersion: 1,
     ...overrides,
   };
 }

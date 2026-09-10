@@ -3,6 +3,7 @@ import { firebaseAuth, firestore } from './client';
 import { createFirestoreDateTagRepository } from './repositories/firestoreDateTagRepository';
 import { createFirestoreMemoryRepository } from './repositories/firestoreMemoryRepository';
 import { createFirestoreTagRepository } from './repositories/firestoreTagRepository';
+import { createFirestoreTodoRepository } from './repositories/firestoreTodoRepository';
 import { createFirestoreUserProfileRepository } from './repositories/firestoreUserProfileRepository';
 
 /**
@@ -17,6 +18,7 @@ export const userProfileRepository = createFirestoreUserProfileRepository(firest
 export const memoryRepository = createFirestoreMemoryRepository(firestore);
 export const tagRepository = createFirestoreTagRepository(firestore);
 export const dateTagRepository = createFirestoreDateTagRepository(firestore);
+export const todoRepository = createFirestoreTodoRepository(firestore);
 
 export { firebaseApp, firebaseAuth, firestore } from './client';
 export { mapFirebaseError } from './errorMapping';

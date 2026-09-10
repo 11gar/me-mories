@@ -8,6 +8,7 @@ export const ROUTES = {
   home: '/',
   login: '/login',
   memories: '/memories',
+  todos: '/todos',
   memory: '/memories/:memoryId',
   calendar: '/calendar',
   swipe: '/swipe',

@@ -1,0 +1,65 @@
+.group {
+  border-bottom: 1px solid var(--mm-border);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.summary {
+  display: flex;
+  gap: var(--mm-space-2);
+  align-items: center;
+  padding: var(--mm-space-3) var(--mm-space-1);
+  cursor: pointer;
+  border-radius: var(--mm-radius-sm);
+
+  // The default disclosure triangle is replaced by the chevron below; both
+  // vendor forms are needed to cover Safari.
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  @include focus-ring(-2px);
+
+  &:hover {
+    background: var(--mm-surface-hover);
+  }
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--mm-text-subtle);
+  transition: transform var(--mm-duration-fast) var(--mm-ease);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  .group[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.title {
+  display: flex;
+  gap: var(--mm-space-2);
+  align-items: center;
+  min-width: 0;
+  font-size: var(--mm-text-base);
+  font-weight: var(--mm-weight-semibold);
+  color: var(--mm-text);
+}
+
+.meta {
+  margin-left: auto;
+  font-size: var(--mm-text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--mm-text-subtle);
+}
+
+.content {
+  padding: 0 0 var(--mm-space-3);
+}
