@@ -10,10 +10,11 @@ import {
 } from '@/domain/models';
 import { suggestTagColor } from '@/domain/services/colors';
 import type { CollectionChange } from '@/domain/repositories';
-import { memoryRepository, tagRepository } from '@/infrastructure/firebase';
+import { memoryRepository, tagRepository, todoRepository } from '@/infrastructure/firebase';
 
 import { memoryIdsWithTag } from './memoriesStore';
 import { requireUserId } from './sessionStore';
+import { todoIdsWithTag } from './todosStore';
 
 interface TagsState {
   byId: Record<string, Tag>;
@@ -133,21 +134,30 @@ export async function updateTag(
 }
 
 /**
- * Deletes a tag and detaches it from every memory carrying it.
+ * Deletes a tag and detaches it from every memory and todo carrying it.
  *
  * Firestore has no referential integrity, so the cascade is ours to run. It goes
  * first: a tag document that outlives a failed detach is a harmless orphan,
  * while memories pointing at a deleted tag would render blank chips.
+ *
+ * Both collections share one tag vocabulary, so both have to be swept — a todo
+ * left holding a deleted tag would keep its own group open in the Todo page,
+ * headed by a tag that no longer resolves.
  */
 export async function deleteTag(tagId: TagId, now = new Date()): Promise<void> {
   const userId = requireUserId();
-  const affected = memoryIdsWithTag(tagId);
+  const affectedMemories = memoryIdsWithTag(tagId);
+  const affectedTodos = todoIdsWithTag(tagId);
 
-  await memoryRepository.detachTag(userId, tagId, affected, now);
+  await memoryRepository.detachTag(userId, tagId, affectedMemories, now);
+  await todoRepository.detachTag(userId, tagId, affectedTodos, now);
   await tagRepository.delete(userId, tagId);
 }
 
-/** Moves every memory from `sourceTagId` to `targetTagId`, then drops the source. */
+/**
+ * Moves every memory and todo from `sourceTagId` to `targetTagId`, then drops
+ * the source.
+ */
 export async function mergeTags(
   sourceTagId: TagId,
   targetTagId: TagId,
@@ -156,8 +166,10 @@ export async function mergeTags(
   if (sourceTagId === targetTagId) return;
 
   const userId = requireUserId();
-  const affected = memoryIdsWithTag(sourceTagId);
+  const affectedMemories = memoryIdsWithTag(sourceTagId);
+  const affectedTodos = todoIdsWithTag(sourceTagId);
 
-  await memoryRepository.replaceTag(userId, sourceTagId, targetTagId, affected, now);
+  await memoryRepository.replaceTag(userId, sourceTagId, targetTagId, affectedMemories, now);
+  await todoRepository.replaceTag(userId, sourceTagId, targetTagId, affectedTodos, now);
   await tagRepository.delete(userId, sourceTagId);
 }

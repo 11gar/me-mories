@@ -1,7 +1,7 @@
 import { collection, doc } from 'firebase/firestore';
 import type { CollectionReference, DocumentReference, Firestore } from 'firebase/firestore';
 
-import type { DateTagId, MemoryId, TagId, UserId } from '@/domain/models';
+import type { DateTagId, MemoryId, TagId, TodoId, UserId } from '@/domain/models';
 
 /**
  * Every collection path in one place.
@@ -15,6 +15,7 @@ export const COLLECTIONS = {
   memories: 'memories',
   tags: 'tags',
   dateTags: 'dateTags',
+  todos: 'todos',
 } as const;
 
 export const userDoc = (db: Firestore, userId: UserId): DocumentReference =>
@@ -40,3 +41,9 @@ export const dateTagDoc = (
   userId: UserId,
   dateTagId: DateTagId,
 ): DocumentReference => doc(db, COLLECTIONS.users, userId, COLLECTIONS.dateTags, dateTagId);
+
+export const todosCollection = (db: Firestore, userId: UserId): CollectionReference =>
+  collection(db, COLLECTIONS.users, userId, COLLECTIONS.todos);
+
+export const todoDoc = (db: Firestore, userId: UserId, todoId: TodoId): DocumentReference =>
+  doc(db, COLLECTIONS.users, userId, COLLECTIONS.todos, todoId);

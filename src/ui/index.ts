@@ -1,3 +1,6 @@
+export { Accordion } from './Accordion/Accordion';
+export type { AccordionProps } from './Accordion/Accordion';
+
 export { Button } from './Button/Button';
 export type { ButtonProps, ButtonSize, ButtonVariant } from './Button/Button';
 

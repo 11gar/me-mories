@@ -1,0 +1,35 @@
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--mm-space-16) 0;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--mm-space-4);
+}
+
+.switch {
+  display: inline-flex;
+  gap: var(--mm-space-2);
+  align-items: center;
+  font-size: var(--mm-text-sm);
+  color: var(--mm-text-muted);
+  cursor: pointer;
+
+  input {
+    cursor: pointer;
+    accent-color: var(--mm-primary);
+  }
+
+  &:hover {
+    color: var(--mm-text);
+  }
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mm-space-8);
+}

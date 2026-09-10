@@ -2,15 +2,26 @@ import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 import type { AppError } from '@/domain/errors';
-import { dateTagRepository, memoryRepository, tagRepository } from '@/infrastructure/firebase';
-import { useDateTagsStore, useMemoriesStore, useSessionStore, useTagsStore } from '@/store';
+import {
+  dateTagRepository,
+  memoryRepository,
+  tagRepository,
+  todoRepository,
+} from '@/infrastructure/firebase';
+import {
+  useDateTagsStore,
+  useMemoriesStore,
+  useSessionStore,
+  useTagsStore,
+  useTodosStore,
+} from '@/store';
 
 import { useAuth } from './authContext';
 
 /**
  * Opens and closes the Firestore listeners that feed the local read model.
  *
- * The whole collection is streamed, unfiltered, for each of the three
+ * The whole collection is streamed, unfiltered, for each of the four
  * collections. That sounds extravagant and is not: with IndexedDB persistence a
  * cold start reads from disk and only fetches what changed, and in exchange
  * every filter, sort, random draw and full-text query in the app runs locally,
@@ -29,6 +40,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       useMemoriesStore.getState().reset();
       useTagsStore.getState().reset();
       useDateTagsStore.getState().reset();
+      useTodosStore.getState().reset();
       endSession();
       return;
     }
@@ -65,6 +77,14 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         },
         onError,
       }),
+
+      todoRepository.observeAll(user.id, {
+        onSnapshot: ({ changes }) => {
+          useTodosStore.getState().applyChanges(changes);
+          markReadyWhenLoaded(setStatus);
+        },
+        onError,
+      }),
     ];
 
     return () => {
@@ -75,12 +95,13 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   return children;
 }
 
-/** Ready only once all three collections have delivered their first snapshot. */
+/** Ready only once every collection has delivered its first snapshot. */
 function markReadyWhenLoaded(setStatus: (status: 'ready') => void): void {
   const loaded =
     useMemoriesStore.getState().loaded &&
     useTagsStore.getState().loaded &&
-    useDateTagsStore.getState().loaded;
+    useDateTagsStore.getState().loaded &&
+    useTodosStore.getState().loaded;
 
   if (loaded) setStatus('ready');
 }

@@ -28,3 +28,7 @@ export const asTagId = (value: string): TagId => value as TagId;
 export const dateTagIdSchema = z.string().min(1).brand<'DateTagId'>();
 export type DateTagId = z.infer<typeof dateTagIdSchema>;
 export const asDateTagId = (value: string): DateTagId => value as DateTagId;
+
+export const todoIdSchema = z.string().min(1).brand<'TodoId'>();
+export type TodoId = z.infer<typeof todoIdSchema>;
+export const asTodoId = (value: string): TodoId => value as TodoId;

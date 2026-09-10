@@ -62,6 +62,24 @@ function aDateTag(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function aTodo(overrides: Record<string, unknown> = {}) {
+  return {
+    title: 'Sortir les poubelles',
+    dueDate: '2026-08-02',
+    recurrence: null,
+    status: 'todo',
+    tagIds: [],
+    seriesId: null,
+    postponeCount: 0,
+    completedAt: null,
+    createdAt: now(),
+    updatedAt: now(),
+    deletedAt: null,
+    schemaVersion: 1,
+    ...overrides,
+  };
+}
+
 function aProfile(overrides: Record<string, unknown> = {}) {
   return {
     displayName: 'Alice',
@@ -103,6 +121,7 @@ describe('isolation entre utilisateurs', () => {
       await setDoc(doc(db, `users/${ALICE}/memories/m1`), aMemory());
       await setDoc(doc(db, `users/${ALICE}/tags/t1`), aTag());
       await setDoc(doc(db, `users/${ALICE}/dateTags/d1`), aDateTag());
+      await setDoc(doc(db, `users/${ALICE}/todos/td1`), aTodo());
     });
   });
 
@@ -122,12 +141,14 @@ describe('isolation entre utilisateurs', () => {
     await assertFails(getDoc(doc(asAnonymous(), `users/${ALICE}/memories/m1`)));
     await assertFails(getDoc(doc(asAnonymous(), `users/${ALICE}/tags/t1`)));
     await assertFails(getDoc(doc(asAnonymous(), `users/${ALICE}/dateTags/d1`)));
+    await assertFails(getDoc(doc(asAnonymous(), `users/${ALICE}/todos/td1`)));
   });
 
   it('autorise le propriétaire à lire ses propres données', async () => {
     await assertSucceeds(getDoc(doc(asAlice(), `users/${ALICE}/memories/m1`)));
     await assertSucceeds(getDoc(doc(asAlice(), `users/${ALICE}/tags/t1`)));
     await assertSucceeds(getDoc(doc(asAlice(), `users/${ALICE}/dateTags/d1`)));
+    await assertSucceeds(getDoc(doc(asAlice(), `users/${ALICE}/todos/td1`)));
   });
 });
 
@@ -235,6 +256,98 @@ describe('validation des DateTags', () => {
   it('refuse un timestamp à la place de la date civile', async () => {
     await assertFails(
       setDoc(doc(asAlice(), `users/${ALICE}/dateTags/d1`), aDateTag({ date: now() })),
+    );
+  });
+});
+
+describe('validation des Todos', () => {
+  const path = `users/${ALICE}/todos/td1`;
+
+  it('accepte un Todo conforme', async () => {
+    await assertSucceeds(setDoc(doc(asAlice(), path), aTodo()));
+  });
+
+  it('accepte une tâche sans date ni récurrence', async () => {
+    await assertSucceeds(setDoc(doc(asAlice(), path), aTodo({ dueDate: null, recurrence: null })));
+  });
+
+  it('accepte une récurrence bien formée', async () => {
+    await assertSucceeds(
+      setDoc(doc(asAlice(), path), aTodo({ recurrence: { unit: 'day', interval: 2 } })),
+    );
+  });
+
+  it('refuse un titre vide', async () => {
+    await assertFails(setDoc(doc(asAlice(), path), aTodo({ title: '' })));
+  });
+
+  it('refuse un champ inconnu', async () => {
+    await assertFails(setDoc(doc(asAlice(), path), aTodo({ priority: 'haute' })));
+  });
+
+  it('refuse un champ obligatoire manquant', async () => {
+    const { status: _omitted, ...withoutStatus } = aTodo();
+
+    await assertFails(setDoc(doc(asAlice(), path), withoutStatus));
+  });
+
+  it('refuse un statut hors de la liste', async () => {
+    await assertFails(setDoc(doc(asAlice(), path), aTodo({ status: 'en-cours' })));
+  });
+
+  it('refuse un timestamp à la place de la date civile', async () => {
+    await assertFails(setDoc(doc(asAlice(), path), aTodo({ dueDate: now() })));
+  });
+
+  it('refuse une date mal formée', async () => {
+    await assertFails(setDoc(doc(asAlice(), path), aTodo({ dueDate: '02/08/2026' })));
+  });
+
+  it('refuse une récurrence dont l’unité est inconnue', async () => {
+    await assertFails(
+      setDoc(doc(asAlice(), path), aTodo({ recurrence: { unit: 'year', interval: 1 } })),
+    );
+  });
+
+  it('refuse un intervalle de récurrence nul ou négatif', async () => {
+    await assertFails(
+      setDoc(doc(asAlice(), path), aTodo({ recurrence: { unit: 'day', interval: 0 } })),
+    );
+  });
+
+  it('refuse une récurrence sans date de départ', async () => {
+    // Une règle sans ancre ne peut produire aucune date : l’invariant est
+    // vérifié côté serveur, pas seulement dans le formulaire.
+    await assertFails(
+      setDoc(
+        doc(asAlice(), path),
+        aTodo({ dueDate: null, recurrence: { unit: 'week', interval: 1 } }),
+      ),
+    );
+  });
+
+  it('refuse un compteur de reports négatif', async () => {
+    await assertFails(setDoc(doc(asAlice(), path), aTodo({ postponeCount: -1 })));
+  });
+
+  it("interdit de réécrire createdAt lors d'une mise à jour", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path), aTodo({ createdAt: earlier() }));
+    });
+
+    await assertFails(setDoc(doc(asAlice(), path), aTodo({ createdAt: now() })));
+  });
+
+  it('autorise une mise à jour qui préserve createdAt', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path), aTodo({ createdAt: earlier() }));
+    });
+
+    await assertSucceeds(
+      setDoc(
+        doc(asAlice(), path),
+        aTodo({ createdAt: earlier(), status: 'done', completedAt: now() }),
+      ),
     );
   });
 });

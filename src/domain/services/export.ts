@@ -1,4 +1,4 @@
-import type { DateTag, Memory, Tag } from '../models';
+import type { DateTag, Memory, Tag, Todo } from '../models';
 
 /**
  * Data export.
@@ -12,12 +12,15 @@ import type { DateTag, Memory, Tag } from '../models';
  * accidentally depend on what is on screen.
  */
 
-export const EXPORT_SCHEMA_VERSION = 1;
+// Bumped to 2 when todos joined the dump: an importer has to be able to tell
+// a file that predates them from one where the user simply had none.
+export const EXPORT_SCHEMA_VERSION = 2;
 
 export interface ExportInput {
   memories: readonly Memory[];
   tags: readonly Tag[];
   dateTags: readonly DateTag[];
+  todos: readonly Todo[];
   exportedAt?: Date;
 }
 
@@ -26,6 +29,7 @@ export function toJsonExport({
   memories,
   tags,
   dateTags,
+  todos,
   exportedAt = new Date(),
 }: ExportInput): string {
   return JSON.stringify(
@@ -54,6 +58,20 @@ export function toJsonExport({
         dateTagIds: memory.dateTagIds,
         deletedAt: memory.deletedAt?.toISOString() ?? null,
         reviewCount: memory.reviewCount,
+      })),
+      todos: todos.map((todo) => ({
+        id: todo.id,
+        title: todo.title,
+        dueDate: todo.dueDate,
+        recurrence: todo.recurrence,
+        status: todo.status,
+        tagIds: todo.tagIds,
+        seriesId: todo.seriesId,
+        postponeCount: todo.postponeCount,
+        completedAt: todo.completedAt?.toISOString() ?? null,
+        createdAt: todo.createdAt.toISOString(),
+        updatedAt: todo.updatedAt.toISOString(),
+        deletedAt: todo.deletedAt?.toISOString() ?? null,
       })),
     },
     null,

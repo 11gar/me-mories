@@ -15,15 +15,22 @@ interface NavItem {
   to: string;
   label: string;
   icon: IconName;
-  /** Hidden from the mobile bar, which only has room for five. */
+  /**
+   * Hidden from the mobile bar, which only has room for five.
+   *
+   * "Relire" gave up its slot to "À faire": one is a browsing mode reached when
+   * there is time to spare, the other is opened several times a day. On a phone
+   * the five thumb-reachable slots go to what people actually tap.
+   */
   desktopOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
   { to: ROUTES.home, label: NAV_LABELS.home, icon: 'home' },
   { to: ROUTES.memories, label: NAV_LABELS.memories, icon: 'layers' },
+  { to: ROUTES.todos, label: NAV_LABELS.todos, icon: 'checkSquare' },
   { to: ROUTES.calendar, label: NAV_LABELS.calendar, icon: 'calendar' },
-  { to: ROUTES.swipe, label: NAV_LABELS.swipe, icon: 'shuffle' },
+  { to: ROUTES.swipe, label: NAV_LABELS.swipe, icon: 'shuffle', desktopOnly: true },
   { to: ROUTES.tags, label: NAV_LABELS.tags, icon: 'tag', desktopOnly: true },
   { to: ROUTES.dateTags, label: NAV_LABELS.dateTags, icon: 'sparkles', desktopOnly: true },
   { to: ROUTES.settings, label: NAV_LABELS.settings, icon: 'settings' },

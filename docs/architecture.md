@@ -7,7 +7,7 @@ ce qui suit est ce qu'on ne peut pas deviner en la lisant.
 
 ## 1. La décision centrale : la lecture est locale
 
-À la connexion, l'intégralité des Memories, Tags et DateTags de l'utilisateur est synchronisée via
+À la connexion, l'intégralité des Memories, Tags, DateTags et Todos de l'utilisateur est synchronisée via
 `onSnapshot` dans un store normalisé en mémoire, adossé au cache IndexedDB de Firestore. **Toutes**
 les lectures — accueil, recherche, calendrier, mode swipe, filtres — sont des sélecteurs purs sur ce
 store. Les écritures passent par les repositories vers Firestore, qui les applique immédiatement au
@@ -73,6 +73,7 @@ users/{uid}                        UserProfile
 users/{uid}/memories/{memoryId}    Memory
 users/{uid}/tags/{tagId}           Tag
 users/{uid}/dateTags/{dateTagId}   DateTag
+users/{uid}/todos/{todoId}         Todo
 ```
 
 Le choix des sous-collections plutôt que de collections racine avec un champ `ownerId` donne une
@@ -92,6 +93,18 @@ sélecteur.
 **`deletedAt` plutôt qu'une suppression sèche.** Le mode swipe propose de supprimer ; sur une base
 de connaissances personnelle, ce geste doit être réversible. La suppression définitive n'existe qu'au
 vidage de la corbeille.
+
+**Un Todo récurrent est une série, pas une liste d'occurrences.** Un seul document porte la règle
+et la date de la _prochaine_ occurrence ; le valider ou le reporter écrit un document d'occurrence
+figé sur le jour concerné, puis fait avancer la série. Pré-générer les occurrences obligerait à
+choisir un horizon (et à le repousser indéfiniment) ; les recalculer à la volée sans rien écrire
+perdrait l'historique. Les trois natures — ponctuelle, série, occurrence — tiennent dans un seul
+schéma, distinguées par `recurrence` et `seriesId`, plutôt qu'en sous-types : c'est la même logique
+de champs optionnels additifs que partout ailleurs.
+
+**`Todo.dueDate` n'est pas un DateTag.** Un DateTag est une entité partagée qui nomme un jour
+mémorable ; une échéance est un scalaire propre à une tâche. Les confondre remplirait la page Dates
+de toutes les deadlines jamais posées.
 
 **`lastReviewedAt` et `reviewCount` dès la v1.** Ils alimentent le tirage pondéré : une Memory jamais
 revue remonte en priorité dans le mode swipe et sur l'accueil. Un tirage purement aléatoire répète
@@ -115,7 +128,7 @@ où une vraie migration deviendrait nécessaire.
    correspond pas au modèle est refusé côté serveur, avec des listes de clés exactes, des types, des
    bornes de taille et un format de date vérifié par regex. `createdAt` est immuable après création.
 
-Ces garanties sont couvertes par 25 tests exécutés contre l'émulateur (`npm run test:rules`) — la
+Ces garanties sont couvertes par 40 tests exécutés contre l'émulateur (`npm run test:rules`) — la
 seule manière de savoir qu'une règle de sécurité fait ce qu'on croit.
 
 ---

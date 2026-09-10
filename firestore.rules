@@ -32,6 +32,12 @@ service cloud.firestore {
       return value is list && value.size() <= maxLength;
     }
 
+    // A civil day, never an instant: a timestamp would shift by a day depending
+    // on the reader's timezone.
+    function isCivilDate(value) {
+      return value is string && value.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
     // createdAt is written once, at creation, and never again.
     function keepsCreatedAt() {
       return request.resource.data.createdAt == resource.data.createdAt;
@@ -70,11 +76,43 @@ service cloud.firestore {
 
     function isValidDateTag(d) {
       return hasExactKeys(d, ['date', 'label', 'createdAt', 'updatedAt'])
-        // Civil date, not an instant — no timezone can shift it a day.
-        && d.date is string && d.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && isCivilDate(d.date)
         && (d.label == null || isNonEmptyString(d.label, 80))
         && d.createdAt is timestamp
         && d.updatedAt is timestamp;
+    }
+
+    // A repetition rule, stored as a nested map so each field can be checked
+    // here rather than trusted inside an opaque string.
+    function isValidRecurrence(r) {
+      return r == null
+        || (r is map
+            && hasExactKeys(r, ['unit', 'interval'])
+            && r.unit in ['day', 'week', 'month']
+            && r.interval is int && r.interval >= 1 && r.interval <= 365);
+    }
+
+    function isValidTodo(d) {
+      return hasExactKeys(d, [
+               'title', 'dueDate', 'recurrence', 'status', 'tagIds', 'seriesId',
+               'postponeCount', 'completedAt', 'createdAt', 'updatedAt',
+               'deletedAt', 'schemaVersion'
+             ])
+        && isNonEmptyString(d.title, 280)
+        && (d.dueDate == null || isCivilDate(d.dueDate))
+        && isValidRecurrence(d.recurrence)
+        // A rule with nothing to repeat from cannot produce a date; refusing it
+        // here keeps the invariant true even for a client that forgot it.
+        && (d.recurrence == null || d.dueDate != null)
+        && d.status in ['todo', 'done', 'postponed']
+        && isIdList(d.tagIds, 50)
+        && (d.seriesId == null || isNonEmptyString(d.seriesId, 200))
+        && d.postponeCount is int && d.postponeCount >= 0
+        && isNullableTimestamp(d.completedAt)
+        && d.createdAt is timestamp
+        && d.updatedAt is timestamp
+        && isNullableTimestamp(d.deletedAt)
+        && d.schemaVersion is int && d.schemaVersion >= 1;
     }
 
     function isValidUserProfile(d) {
@@ -119,6 +157,15 @@ service cloud.firestore {
         allow read: if isOwner(userId);
         allow create: if isOwner(userId) && isValidDateTag(request.resource.data);
         allow update: if isOwner(userId) && isValidDateTag(request.resource.data) && keepsCreatedAt();
+        allow delete: if isOwner(userId);
+      }
+
+      match /todos/{todoId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidTodo(request.resource.data);
+        allow update: if isOwner(userId) && isValidTodo(request.resource.data) && keepsCreatedAt();
+        // Hard delete stays available for emptying the trash; the app soft-deletes
+        // first by setting `deletedAt`.
         allow delete: if isOwner(userId);
       }
     }
