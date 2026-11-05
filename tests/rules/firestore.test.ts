@@ -152,6 +152,50 @@ describe('isolation entre utilisateurs', () => {
   });
 });
 
+describe('lecteurs autorisés (écran 11TV)', () => {
+  const TV = 'tv-uid';
+  const asTv = () => testEnv.authenticatedContext(TV).firestore();
+
+  beforeEach(async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, `users/${ALICE}/todos/td1`), aTodo());
+      await setDoc(doc(db, `users/${ALICE}/tags/t1`), aTag());
+      await setDoc(doc(db, `users/${ALICE}/memories/m1`), aMemory());
+    });
+  });
+
+  async function allowTv() {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), `users/${ALICE}/readers/${TV}`), {});
+    });
+  }
+
+  it("refuse la lecture tant que le propriétaire n'a pas autorisé le lecteur", async () => {
+    await assertFails(getDoc(doc(asTv(), `users/${ALICE}/todos/td1`)));
+  });
+
+  it('autorise un lecteur à lire les Todos et les Tags, rien d’autre', async () => {
+    await allowTv();
+    await assertSucceeds(getDoc(doc(asTv(), `users/${ALICE}/todos/td1`)));
+    await assertSucceeds(getDoc(doc(asTv(), `users/${ALICE}/tags/t1`)));
+    await assertFails(getDoc(doc(asTv(), `users/${ALICE}/memories/m1`)));
+    await assertFails(getDoc(doc(asTv(), `users/${ALICE}`)));
+  });
+
+  it('interdit à un lecteur toute écriture', async () => {
+    await allowTv();
+    await assertFails(setDoc(doc(asTv(), `users/${ALICE}/todos/td2`), aTodo()));
+    await assertFails(updateDoc(doc(asTv(), `users/${ALICE}/todos/td1`), { title: 'Piraté' }));
+    await assertFails(deleteDoc(doc(asTv(), `users/${ALICE}/todos/td1`)));
+  });
+
+  it("interdit à quiconque de s'ajouter comme lecteur", async () => {
+    await assertFails(setDoc(doc(asBob(), `users/${ALICE}/readers/${BOB}`), {}));
+    await assertFails(setDoc(doc(asAlice(), `users/${ALICE}/readers/${BOB}`), {}));
+  });
+});
+
 describe('validation des Memories', () => {
   it('accepte une Memory conforme', async () => {
     await assertSucceeds(setDoc(doc(asAlice(), `users/${ALICE}/memories/m1`), aMemory()));

@@ -20,6 +20,14 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
+    // A read-only reader the owner has allowed, such as the 11TV screen. Its uid
+    // is listed under /users/{uid}/readers, a collection only the console can
+    // write: no client can grant itself access.
+    function isReader(userId) {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/users/$(userId)/readers/$(request.auth.uid));
+    }
+
     function isNonEmptyString(value, maxLength) {
       return value is string && value.size() > 0 && value.size() <= maxLength;
     }
@@ -146,8 +154,15 @@ service cloud.firestore {
         allow delete: if isOwner(userId);
       }
 
-      match /tags/{tagId} {
+      // Readers allowed by the owner. Managed from the Firebase console only.
+      match /readers/{readerId} {
         allow read: if isOwner(userId);
+        allow write: if false;
+      }
+
+      match /tags/{tagId} {
+        // Readers see tags so todo chips keep their titles and colours.
+        allow read: if isOwner(userId) || isReader(userId);
         allow create: if isOwner(userId) && isValidTag(request.resource.data);
         allow update: if isOwner(userId) && isValidTag(request.resource.data) && keepsCreatedAt();
         allow delete: if isOwner(userId);
@@ -161,7 +176,8 @@ service cloud.firestore {
       }
 
       match /todos/{todoId} {
-        allow read: if isOwner(userId);
+        // Readers can read, never write: every write rule below is owner-only.
+        allow read: if isOwner(userId) || isReader(userId);
         allow create: if isOwner(userId) && isValidTodo(request.resource.data);
         allow update: if isOwner(userId) && isValidTodo(request.resource.data) && keepsCreatedAt();
         // Hard delete stays available for emptying the trash; the app soft-deletes
